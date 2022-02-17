@@ -41,7 +41,7 @@ function SquadList() {
 
   function handleNavigate(id) {
     console.log(id)
-     return navigate(`/squads/${id}`)
+    return navigate(`/squads/${id}`)
   }
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -64,30 +64,37 @@ function SquadList() {
         <Button variant="contained" onClick={handleOpen} startIcon={<GroupIcon />}>Criar Squad</Button>
         <br /><br />
         <main className="main">
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>ID</StyledTableCell>
-                  <StyledTableCell align="right">Nome</StyledTableCell>
-                  <StyledTableCell align="right"></StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.map((row) => (
-                  <TableRow key={row.id}>
-                    <StyledTableCell component="th" scope="row">
-                      {row.id}
-                    </StyledTableCell>
-                    <StyledTableCell align="right">{row.name}</StyledTableCell>
-                    <StyledTableCell align="right"><Button variant='contained' onClick={() => handleNavigate(row.id)}>Visitar Squad</Button></StyledTableCell>
+          {Object.keys(data).length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>ID</StyledTableCell>
+                    <StyledTableCell align="right">Nome</StyledTableCell>
+                    <StyledTableCell align="right"></StyledTableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </main>
+                </TableHead>
+                <TableBody>
+                  {data.map((row) => (
+                    <TableRow key={row.id}>
+                      <StyledTableCell component="th" scope="row">
+                        {row.id}
+                      </StyledTableCell>
+                      <StyledTableCell align="right">{row.name}</StyledTableCell>
+                      <StyledTableCell align="right"><Button variant='contained' onClick={() => handleNavigate(row.id)}>Visitar Squad</Button></StyledTableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <div className='imgDiv'>
+              <img className='img' src={require('../../../services/img1.png')} />
+              <h3 className='dateDiv'>Nenhuma squad cadastrada. Crie uma squad para começar</h3>
+            </div>
+          )}
 
+        </main>
         <div>
 
         </div>

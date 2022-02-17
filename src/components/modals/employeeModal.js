@@ -8,6 +8,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 import api from '../../services/api'
 
@@ -35,8 +37,14 @@ const EmployeeModal = ({ open, setOpen }) => {
         squadId: ""
     }
 
+    const emptyValidate = {
+        error: false,
+        text: ''
+    }
+
     const [employee, setEmployee] = useState(emptyEmployee)
     const [squadList, setSquadList] = useState([])
+    const [validate, setValidate] = useState(emptyValidate)
 
     const handleClose = () => setOpen(false);
 
@@ -62,7 +70,29 @@ const EmployeeModal = ({ open, setOpen }) => {
     }
 
     const createEmployee = async () => {
-        console.log(employee)
+        for (let i = 0; i < Object.entries(employee).length; i++) {
+            if (Object.entries(employee)[i][1] === '') {
+                let error = {
+                    error: true,
+                    text: 'Todos os campos precisam ser preenchidos!'
+                }
+
+                setValidate(error)
+
+                return;
+            }
+
+        }
+
+        if(employee.estimatedHours <= 0 || employee.estimatedHours > 12){
+            let error = {
+                error: true,
+                text: 'O valor fornecido deverá ser de no mínimo 1 até máximo 12!'
+            }
+            setValidate(error)
+            return;
+        }
+
         api.post('/employee', employee).then(res => {
             console.log(res.data)
             alert('Usuário cadastrado com sucesso!')
@@ -73,6 +103,8 @@ const EmployeeModal = ({ open, setOpen }) => {
         })
 
     }
+
+    const resetValidate = () => setValidate(emptyValidate)
 
     return (
         open && (
@@ -87,12 +119,19 @@ const EmployeeModal = ({ open, setOpen }) => {
                         <br />
                     <h1>Criar Usuário</h1>
                     <br /><br /><br />
+                    {
+                            validate.error && (
+                                <Stack sx={{ width: '100%' }} spacing={2}>
+                                    <Alert onClose={resetValidate} severity="error">{validate.text}</Alert><br /><br />
+                                </Stack>
+                            )
+                        }
                             <FormControl fullWidth>
                                 <TextField placeholder='NOME' value={employee.name} label="NOME"
                                     onChange={(e) => handleChange('name', e.target.value)} />
                                 <br />
-                                <TextField placeholder='HORAS ESTIMADAS DE TRABALHO' type="number" label="HORAS ESTIMADAS DE TRABALHO"
-                                    value={employee.estimated_hours} onChange={(e) => handleChange('estimatedHours', e.target.value)} />
+                                <TextField placeholder='Horas (min.1 máx. 12)' type="number" label="HORAS ESTIMADAS DE TRABALHO" 
+                                    value={employee.estimatedHours} onChange={(e) => handleChange('estimatedHours', e.target.value)} />
                             </FormControl>
                             <br />
                             <FormControl fullWidth>

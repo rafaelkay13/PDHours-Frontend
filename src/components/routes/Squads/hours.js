@@ -9,8 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../../../styles.css'
 import api from '../../../services/api'
 
@@ -20,6 +19,11 @@ let emptyFilter = {
     end: ''
 }
 
+let msgBegin = {
+   text:'Nenhum intervalo de data selecionado. Selecione um intervalo para começar',
+   img: require('../../../services/img1.png')
+}
+
 function Hours() {
 
     const [data, setData] = useState([])
@@ -27,7 +31,9 @@ function Hours() {
     const [squad, setSquad] = useState({})
     const [media, setMedia] = useState(0)
     const [total, setTotal] = useState(0)
+    const [msg, setMsg] = useState(msgBegin)
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -37,11 +43,9 @@ function Hours() {
 
         const getData = async () => {
             try {
-                const response = await api.get(`/reports`)
-                setData(response.data)
                 const _squad = await api.get(`/squad/${id}`)
                 setSquad(_squad.data[0])
-                
+
             } catch (err) {
                 console.log(err)
                 alert('Ocorreu um erro!')
@@ -80,6 +84,13 @@ function Hours() {
 
     const handleFilter = async () => {
         console.log(filter)
+        const _data = await api.post(`/reportsBySquad`, filter)
+        console.log(_data.data)
+        setData(_data.data)
+        if(Object.keys(_data.data) <= 0){
+            let _msg = msg;
+            _msg.text = 'Não foi encontrado nenhum registro no periodo informado.'
+        }
         const _total = await api.post(`/totalHours`, filter)
         console.log(_total.data.result)
         setTotal(_total.data.result)
@@ -92,8 +103,12 @@ function Hours() {
         <div className='fullpage'>
 
             <React.Fragment>
+                <Button variant='contained' onClick={() => navigate(-1)}>Voltar</Button>
                 <h2>Squad {squad.name}</h2>
                 <br />
+                <div className='centerStyle'>
+                        <h2>Horas por Membro</h2>
+                    </div>
                 <div className='dateDiv'>
                     <div className='dateBegin'>
                         <h6>INICIO</h6>
@@ -105,41 +120,47 @@ function Hours() {
                     </div>
                     <Button variant='contained' onClick={handleFilter}>Filtrar</Button>
                 </div>
-
+                <br /> <br />
                 <main className="main">
-                    <div className='centerStyle'>
-                        <h2>Horas por Membro</h2>
-                    </div>
+                    {Object.keys(data).length > 0 ? (
+                        <React.Fragment>
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <StyledTableCell>Membro</StyledTableCell>
+                                            <StyledTableCell>Descrição</StyledTableCell>
+                                            <StyledTableCell align="right">Horas</StyledTableCell>
+                                            <StyledTableCell align="right">Criado em</StyledTableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {data.map((row) => (
+                                            <TableRow key={row.id}>
+                                                <StyledTableCell component="th" scope="row">{row.employee_id}</StyledTableCell>
+                                                <StyledTableCell>{row.description}</StyledTableCell>
+                                                <StyledTableCell align="right">{row.spent_hours}</StyledTableCell>
+                                                <StyledTableCell align="right">{convertDate(row.created_at)}</StyledTableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <br /><br />
+                            <div className='centerStyle'>
+                                <h3>Horas totais da squad</h3><br /><br />
+                                <h1 className='respStyle'>{total} Horas</h1><br /><br />
+                                <h3>Média de horas por dia</h3><br /><br />
+                                <h1 className='respStyle'>{media} Horas/Dia</h1><br /><br />
+                            </div>
 
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell>Membro</StyledTableCell>
-                                    <StyledTableCell>Descrição</StyledTableCell>
-                                    <StyledTableCell align="right">Horas</StyledTableCell>
-                                    <StyledTableCell align="right">Criado em</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {data.map((row) => (
-                                    <TableRow key={row.id}>
-                                        <StyledTableCell component="th" scope="row">{row.employee_id}</StyledTableCell>
-                                        <StyledTableCell>{row.description}</StyledTableCell>
-                                        <StyledTableCell align="right">{row.spent_hours}</StyledTableCell>
-                                        <StyledTableCell align="right">{convertDate(row.created_at)}</StyledTableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <br /><br />
-                    <div className='centerStyle'>
-                        <h3>Horas totais da squad</h3><br /><br />
-                        <h1 className='respStyle'>{total} Horas</h1><br /><br />
-                        <h3>Média de horas por dia</h3><br /><br />
-                        <h1 className='respStyle'>{media} Horas/Dia</h1><br /><br />
-                    </div>
+                        </React.Fragment>
+                    ) : (
+                            <div className='imgDiv'>
+                                <img className='img' src={msg.img} />
+                                <h3 className='dateDiv'>{msg.text}</h3>
+                            </div>
+                    )}
                 </main>
             </React.Fragment>
             <br /><br />

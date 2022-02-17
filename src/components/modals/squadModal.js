@@ -3,11 +3,9 @@ import './modal.css';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button'
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 import api from '../../services/api'
 
@@ -31,9 +29,16 @@ const SquadModal = ({ open, setOpen }) => {
 
     const emptySquad = {
         name: ''
-        }
+    }
+
+    const emptyValidate = {
+        error: false,
+        text: ''
+    }
 
     const [squad, setSquad] = useState(emptySquad)
+    const [validate, setValidate] = useState(emptyValidate)
+
 
     const handleClose = () => setOpen(false);
 
@@ -59,7 +64,19 @@ const SquadModal = ({ open, setOpen }) => {
     }
 
     const createSquad = async () => {
-        console.log(squad)
+        for (let i = 0; i < Object.entries(squad).length; i++) {
+            if (Object.entries(squad)[i][1] === '') {
+                let error = {
+                    error: true,
+                    text: 'Todos os campos precisam ser preenchidos!'
+                }
+
+                setValidate(error)
+
+                return;
+            }
+        }
+
         api.post('/squad', squad).then(res => {
             console.log(res.data)
             alert('Squad cadastrado com sucesso!')
@@ -71,31 +88,39 @@ const SquadModal = ({ open, setOpen }) => {
 
     }
 
+    const resetValidate = () => setValidate(emptyValidate)
+
     return (
         open && (
-                <div className='modalContainer'>
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <Box sx={style}>
+            <div className='modalContainer'>
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                >
+                    <Box sx={style}>
                         <br />
-                    <h1>Criar Squad</h1>
-                    <br /><br /><br />
-                            <FormControl fullWidth>
-                                <TextField placeholder='NOME DO SQUAD' value={squad.employeeId} label="NOME DO SQUAD"
-                                    onChange={(e) => handleChange('name', e.target.value)} />
-                                <br />
-                            </FormControl>
+                        <h1>Criar Squad</h1>
+                        <br /><br /><br />
+                        {
+                            validate.error && (
+                                <Stack sx={{ width: '100%' }} spacing={2}>
+                                    <Alert onClose={resetValidate} severity="error">{validate.text}</Alert><br /><br />
+                                </Stack>
+                            )
+                        }
+
+                        <FormControl fullWidth>
+                            <TextField required placeholder='NOME DO SQUAD' value={squad.employeeId} label="NOME DO SQUAD"
+                                onChange={(e) => handleChange('name', e.target.value)} />
                             <br />
-                            <br /><br />
-                            <Button variant='contained' size="large" onClick={createSquad}>Criar Squad</Button>
-                        </Box>
-                    </Modal>
-                    <br />
-                </div>
+                        </FormControl>
+                        <br />
+                        <br /><br />
+                        <Button variant='contained' size="large" onClick={createSquad}>Criar Squad</Button>
+                    </Box>
+                </Modal>
+                <br />
+            </div>
         )
     )
 };

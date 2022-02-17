@@ -57,6 +57,7 @@ function EmployeesList() {
         <Button variant="contained" onClick={handleOpen} startIcon={<PersonAddAlt1Icon />}>Criar Usuário</Button>
         <br /><br />
         <main className="main">
+        {Object.keys(data).length > 0 ? (
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -79,6 +80,12 @@ function EmployeesList() {
               </TableBody>
             </Table>
           </TableContainer>
+          ) : (
+            <div className='imgDiv'>
+              <img className='img' src={require('../../../services/img1.png')} />
+              <h3 className='dateDiv'>Nenhum usuário cadastrado. Crie um usuário</h3>
+            </div>
+          )}
         </main>
 
         <div>

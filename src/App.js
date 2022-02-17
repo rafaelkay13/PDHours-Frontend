@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import './styles.css'
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useNavigate, Navigate } from 'react-router-dom'
 import EmployeesList from './components/routes/Employee/list';
 import SquadList from './components/routes/Squads/list';
 import Hours from './components/routes/Squads/hours';
@@ -55,7 +55,7 @@ function Root() {
 
       <div className="container">
           <Routes>
-            <Route path='/' element={null} />
+            <Route path='/' element={<Navigate replace to="/squads" />} />
             <Route path='/employees' element={<EmployeesList />} />
             <Route path='/squads' element={<SquadList />} />
             <Route path='/squads/:id' element={<Hours />} />
