@@ -12,7 +12,7 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
 import '../../../styles.css'
 import EmployeeModal from '../../../components/modals/employeeModal'
-import api from '../../../services/api'
+import api from '../../../utils/api'
 
 function EmployeesList() {
 
@@ -82,7 +82,7 @@ function EmployeesList() {
           </TableContainer>
           ) : (
             <div className='imgDiv'>
-              <img className='img' src={require('../../../services/img1.png')} />
+              <img className='img' src={require('../../../utils/img1.png')} />
               <h3 className='dateDiv'>Nenhum usuário cadastrado. Crie um usuário</h3>
             </div>
           )}

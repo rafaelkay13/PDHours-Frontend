@@ -7,7 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import api from '../../services/api'
+import api from '../../utils/api'
 
 const style = {
     position: 'absolute',

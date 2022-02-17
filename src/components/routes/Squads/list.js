@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import '../../../styles.css'
 import SquadModal from '../../../components/modals/squadModal'
-import api from '../../../services/api'
+import api from '../../../utils/api'
 
 function SquadList() {
 
@@ -89,7 +89,7 @@ function SquadList() {
             </TableContainer>
           ) : (
             <div className='imgDiv'>
-              <img className='img' src={require('../../../services/img1.png')} />
+              <img className='img' src={require('../../../utils/img1.png')} />
               <h3 className='dateDiv'>Nenhuma squad cadastrada. Crie uma squad para começar</h3>
             </div>
           )}

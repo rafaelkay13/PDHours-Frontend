@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../../styles.css'
-import api from '../../../services/api'
+import api from '../../../utils/api'
 
 let emptyFilter = {
     squadId: 0,
@@ -21,7 +21,7 @@ let emptyFilter = {
 
 let msgBegin = {
    text:'Nenhum intervalo de data selecionado. Selecione um intervalo para começar',
-   img: require('../../../services/img1.png')
+   img: require('../../../utils/img1.png')
 }
 
 function Hours() {
